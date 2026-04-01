@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Add Bot Token</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(2,6,23,0.85);
+z-index:0;
+}
+
+.container{
+width:380px;
+background:#020617;
+border-radius:20px;
+padding:25px;
+box-shadow:0 0 40px rgba(0,0,0,0.7);
+position:relative;
+z-index:1;
+}
+
+.banner{
+height:120px;
+border-radius:15px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+margin-bottom:25px;
+background:rgba(255,255,255,0.05);
+}
+
+.banner h2{
+margin:0;
+font-size:22px;
+}
+
+.banner p{
+margin:5px 0 0 0;
+font-size:14px;
+opacity:0.8;
+}
+
+label{
+font-size:14px;
+opacity:0.9;
+}
+
+input{
+width:95%;
+max-width:340px;
+
+display:block;
+margin:10px auto 20px auto;
+
+padding:14px;
+
+border-radius:12px;
+border:1px solid #1e3a8a;
+
+background:#020617;
+color:white;
+
+font-size:15px;
+outline:none;
+}
+
+input:focus{
+border:1px solid #3b82f6;
+box-shadow:0 0 10px #1d4ed8;
+}
+.logout{
+margin-top:15px;
+}
+
+button{
+width:100%;
+height:50px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+
+border:none;
+border-radius:12px;
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+
+font-size:15px;
+font-weight:500;
+
+cursor:pointer;
+transition:all .25s ease;
+
+box-shadow:0 6px 15px rgba(37,99,235,0.35);
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(37,99,235,0.45);
+}
+
+button:active{
+transform:scale(0.97);
+}
+
+.footer{
+text-align:center;
+margin-top:40px;
+font-size:13px;
+opacity:0.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+
+<div class="banner">
+<h2>Welcome - Someone</h2>
+<p>Add DataBase - For Script NYTHERA</p>
+</div>
+
+<label>Bot Token :</label>
+<input type="text" id="token" placeholder="Masukkan Token Bot">
+
+<button onclick="addToken()">➜ Add Token</button>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<div class="footer">
+<p>add token bot telegram by mamz</p>
+<p>this is a project to add a database via a website.</p>
+</div>
+
+</div>
+
+<script>
+
+function logout(){
+localStorage.removeItem("login")
+window.location.href = "index.html"
+}
+
+// GANTI LINK GAMBAR DI SINI
+const bgImage = "https://files.catbox.moe/2o1sq0.jpg";
+
+document.body.style.backgroundImage = `url(${bgImage})`;
+
+const githubToken = "umam989"
+const owner = "umam989"
+const repo = "webaddtoken"
+const path = "tokens.json"
+
+async function addToken(){
+
+let token = document.getElementById("token").value
+
+if(!token){
+alert("Token tidak boleh kosong!")
+return
+}
+
+let res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{
+headers:{
+Authorization:`token ${githubToken}`
+}
+})
+
+let data = await res.json()
+
+let content = JSON.parse(atob(data.content))
+
+content.tokens.push({
+token:token,
+date:new Date().toISOString()
+})
+
+let newContent = btoa(JSON.stringify(content,null,2))
+
+await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{
+method:"PUT",
+headers:{
+Authorization:`token ${githubToken}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:"add bot token",
+content:newContent,
+sha:data.sha
+})
+})
+
+alert("Token berhasil disimpan ke GitHub!")
+
+
+if(!token){
+alert("Token tidak boleh kosong!")
+return
+}
+
+alert("Token berhasil ditambahkan: "+token)
+}
+
+</script>
+
+</body>
+</html>
